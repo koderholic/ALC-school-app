@@ -22,7 +22,7 @@ var studentSchema = new Schema({
     photo : String,
     current_class : {type:Schema.objectId, ref:'Class', required:true},
     current_session : {type:String, required:true},
-    courses : [{type:Schema.objectId, ref : "Course"}],
+    courses : [{type:Schema.objectId, ref:"Course", required:true }],
     student_code : {type:String, unique:true},
     created_at : {type:Date, default:Date.now},
     updated_at : {type:Date, default:Date.now},
