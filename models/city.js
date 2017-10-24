@@ -12,6 +12,7 @@ let citySchema =  new Schema({
 
   state_id: {
     type: Schema.ObjectId,
+    ref:'State',
     required : true
   },
 
