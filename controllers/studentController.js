@@ -1,37 +1,38 @@
 //Requires the student model
 const Student = require('../models/student');
-const Class = require('../models/class');
+const City = require('../models/city');
 const moment = require('moment');
 const ObjectId = require('mongoose').Types.ObjectId;
-  
+var async = require('async');
+const path = require('path');  
 
-
+// validate(validation)
 //This controller method handles fetching and listing of all students in the database
 exports.listStudent = function(req, res, next) {
-    console.log('i am here');
-      
       Student.find()
-      .populate('city_id')
-      .populate('state_id')
       .sort({created_at : 'desc'})
       .exec().then(function (students) {
          
-        if (students.length > 0) {
-
-            console.log('student');
-            res.status(200);
-            res.json(students);
-
+        if (students !== null) {
+           students.forEach((student) => console.log(student.fullname+student.gender));
+            res.status(200).json({
+              success : true,
+              successMsg : "Students fetched successfully!",
+              responseData : students
+            });
         }else{
-            
-            console.log('no student');
-            res.status(200).json({message : "There are currently no students in the database"});//no content found
-        }
+            res.status(200).json({
+              success : true,
+              successMsg : "There are currently no students in the database",
+              responseData : null
+            });
+          }    
       }).catch(function (err) {
     
         let error = {
           status : 500,
-          errMsg : "Sorry! Error occured while fetching all students from the database.Contact your API provider if this persist",
+          success : false,
+          errMsg : "Sorry! Students could not be fetched.",
           errCode : "fetchErrodb",
           devError : err
         };
@@ -41,15 +42,17 @@ exports.listStudent = function(req, res, next) {
     }
 
 
+
+
     // /This controller method handles fetching each stdensts details
     exports.getStudent = function(req, res, next) {
-
       // checks if the id sent is a valid id type;
       if(!ObjectId.isValid(req.params.id)){
         
         let error = {
             status : 400,
-            error : 'There is no building with such id',
+            success : false,
+            errMsg : 'There is no student with such id',
             errCode : 'errQueryDB'
         }
         next(error);
@@ -58,18 +61,17 @@ exports.listStudent = function(req, res, next) {
 
       Student.findById(req.params.id).populate('city_id').populate('city_id.state_id').exec()
       .then(function (student) {
-          
         if (student !== null) {
           res.status(200).json({
             success : true,
-            data : student,
+            responseData : student,
             successMsg : "Student details fetched successfully"
           });
 
         }else{
           let error = {
             status : 400,
-            success : true,
+            success : false,
             errMsg : "Sorry! There is no student with such id",
             errCode : "fetchErrodb"
           };
@@ -79,6 +81,7 @@ exports.listStudent = function(req, res, next) {
     
         let error = {
           status : 500,
+          success : false,
           errMsg : "Sorry! Error occured while fetching all students from the database.Contact your API provider if this persist",
           errCode : "fetchErrodb",
           devError : err
@@ -90,14 +93,40 @@ exports.listStudent = function(req, res, next) {
 
 
 
+
+  //This controller method handles creating the registration form view
+  exports.registerStudent = function name(req, res, next) {
+    async.parallel({
+      
+      cities : function (cb) {
+        City.find(cb);
+      }
+
+    }, (err,result) =>{
+      if(err){
+        let error = {
+          status : 500,
+          success : false,
+          errMsg : 'Could not fetch entities',
+          errCode : 'errDB',
+          devError : err
+        }
+        next(error);
+      }
+      res.status(200).json({
+        success : true,
+        successMsg : "Entity fetched successfully",
+        responseData : result
+      });
+    });
+  }
+
+
+
   //This controller method handles adding a new student to the database
   exports.createStudent = function(req, res, next) {
-    console.log(req.body);
-    console.log('i am'+ req.body.firstname+ req.body.mobile + req.body.address + req.body.current_session);
-      
     var studentDetails = {
         firstname : req.body.firstname,
-        middlename : req.body.middlename,
         lastname : req.body.lastname,
         gender : req.body.gender,
         date_of_birth : req.body.dob,
@@ -105,14 +134,13 @@ exports.listStudent = function(req, res, next) {
         mobile : req.body.mobile,
         address : req.body.address,
         city_id : req.body.city,
-        current_class : req.body.class,
+        current_level : req.body.level,
         current_session : req.body.session,
-        courses : req.body.courses,
+        course : req.body.course
       };
-        console.log('i am  here enter details'); 
-      if(req.body.postal) studentDetails.postal = req.body.postal; 
+        console.log(req.body.firstname+req.body.lastname+req.body.course+req.file); 
       if(req.file) studentDetails.photo = req.file;
-      studentDetails.date_of_birth = moment(req.body.dob); 
+      // studentDetails.date_of_birth = req.body.dob; 
 
     
       var  saveStudent = new Student(studentDetails);
@@ -121,35 +149,39 @@ exports.listStudent = function(req, res, next) {
         console.log('new user');
         res.status(201).json({
           success : true,
-          data : savedStudent,
-          successMsg : "Studen created successfully"
+          responseData : savedStudent,
+          successMsg : "You have successfully been registered!"
         });
 
       }).catch(function (err) {
+        if (err.name === 'MongoError' & err.code === 11000) {
+          console.log('yes')
+          let error = {
+            status : 400,
+            success : false,
+            errMsg : "Sorry! A student with the email address you entered already exist.",
+            errCode : "createErrodb",
+            devError : err
+          };
+          next(error);
+        }else{
+          let error = {
+            status : 500,
+            success : false,
+            errMsg : "Sorry! Registration was not successful, please try again!",
+            errCode : "createErrodb",
+            devError : err
+          };
+          next(error);
+        }
         
-        console.log('no mongoose connect');
-
-        let error = {
-          status : 500,
-          success : false,
-          errMsg : "Sorry! Error occured while creating a new student.Contact your API provider if this persist",
-          errCode : "createErrodb",
-          devError : err
-        };
-        console.log(error);
-        next(error);
     
       });
-      
-      console.log('i am here,register end');
     }   
     
     
     //This controller method handles adding a new student to the database
   exports.updateStudent = function(req, res, next) {
-    console.log(req.body);
-    console.log('i am'+ req.body.firstname+ req.body.mobile + req.body.address + req.body.session);
-      
     var studentUpdates = {
         firstname : req.body.firstname,
         middlename : req.body.middlename,
@@ -164,18 +196,15 @@ exports.listStudent = function(req, res, next) {
         current_session : req.body.session,
         courses : req.body.courses,
       };
-        console.log('i am  here enter details'); 
       if(req.body.postal) studentUpdates.postal = req.body.postal; 
       studentUpdates.photo =  (req.file)? req.file : {};
       studentUpdates.date_of_birth = moment(req.body.dob); 
     
       Student.findByIdAndUpdate(req.params.id,studentUpdates).then(function (updatedStudent) {
-        
-        console.log('Updated user');
         if (updatedStudent) {
           res.status(203).json({
             success : true,
-            data : updatedStudent,
+            responseData : updatedStudent,
             successMsg : "Details has been Updated successfully"
           });
         }else{
@@ -188,9 +217,6 @@ exports.listStudent = function(req, res, next) {
           next(error);
         }
       }).catch(function (err) {
-        
-        console.log('no mongoose connect');
-
         let error = {
           status : 500,
           success : false,
@@ -198,12 +224,9 @@ exports.listStudent = function(req, res, next) {
           errCode : "createErrodb",
           devError : err
         };
-        console.log(error);
         next(error);
     
       });
-      
-      console.log('i am here,register end');
     }    
 
 
@@ -215,7 +238,7 @@ exports.listStudent = function(req, res, next) {
         
         let error = {
             status : 400,
-            error : 'There is no building with such id',
+            error : 'There is no student with such id',
             errCode : 'errQueryDB'
         }
         next(error);
@@ -238,6 +261,7 @@ exports.listStudent = function(req, res, next) {
           
           let error = {
             status : 500,
+            success : false,
             errMsg : "Sorry!An error occured while attepting to delete.Contact your API provider if this persist",
             errCode : "delErrodb",
             devError : err

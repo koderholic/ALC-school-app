@@ -7,19 +7,17 @@ const uniquefy = require('unique-string');
 
 var studentSchema = new Schema({
     firstname : {type:String, required:true},
-    middlename : {type:String, required:true},
     lastname : {type:String, required:true},
     gender : {type:Boolean, required:true},
     date_of_birth : {type :Date , required:true},
-    email : {type : String, required : true},
-    mobile : [String],
+    email : {type : String, required : true, unique : true},
+    mobile : String,
     address : {type:String, required:true},
     city_id : {type: Schema.ObjectId, ref:'City', required:true},
-    postal : String,
     photo : {type : {}},
-    current_class : {type: Schema.ObjectId, ref:'Class', required:true},
+    current_level : {type: String, required:true},
     current_session : {type:String, required:true},
-    courses : [{type: Schema.ObjectId, ref:"Course", required:true }],
+    course : {type: String, required:true },
     student_code : {type:String, unique : true},
     created_at : {type:Date, default:Date.now},
     updated_at : {type:Date, default:Date.now},
@@ -29,7 +27,7 @@ var studentSchema = new Schema({
 studentSchema
 .virtual('fullname')
 .get(function () {
-    return `${this.firstname} ${this.middlename} ${this.lastname}`;
+    return this.firstname +' '+this.lastname;
 });
 
 studentSchema

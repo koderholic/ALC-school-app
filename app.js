@@ -1,12 +1,14 @@
 //Module dependencies.
-var express = require('express');
-var path = require('path');
-var webLogger = require('morgan');
-var cookieParser = require('cookie-parser');
-var async = require('async');
-var cors = require('cors');
-var mongoose = require('mongoose');
-var logger = require('logger').createLogger('development.log'); // logs to a file
+const express = require('express');
+const path = require('path');
+const webLogger = require('morgan');
+const cookieParser = require('cookie-parser');
+const async = require('async');
+const cors = require('cors');
+const mongoose = require('mongoose');
+const EVerr = require('express-validation');
+const logger = require('logger').createLogger('development.log'); // logs to a file
+
 
 
 //models
@@ -27,6 +29,8 @@ mongoose.connect(mongoDB).then(function () {
 //middleware stack
 app.use(webLogger('dev'));
 app.use(cookieParser());
+app.use(cors());
+
 
 app.get('/',function (req,res,next) {
 
@@ -34,6 +38,8 @@ app.get('/',function (req,res,next) {
   
 });
 
+//serve the profile image
+app.use(express.static(path.resolve(__dirname,'uploads')));
 //student routes, gets access to this route only if mongoose connection has been made
   app.use('/students', students);
 
@@ -57,8 +63,16 @@ app.use(function(err, req, res, next) {
   logger.error(err);
 
   //validator errors
-  // if (err instanceof err.ValidationError) return res.status(err.status).json(err)
+  // if (err instanceof EVerr.ValidationError && err.statusText === 'Bad Request') {
 
+  //     res.status(err.status).json({
+  //       success : false,
+  //       status : err.status,
+  //       errMsg : errors,
+  //       errCode : errValidateDB
+  //     })
+  //     return;
+  // }
 
   //  Remove Error's `stack` property. We don't want users to see this at the production env
   if (req.app.get('env') !== 'development') {
