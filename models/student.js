@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const moment = require('moment');
-const City = require('../models/city');
+const State = require('../models/state');
 const generateCode = require('crypto-random-string');
 const uniquefy = require('unique-string');
+
 
 var studentSchema = new Schema({
     firstname : {type:String, required:true},
@@ -22,8 +23,12 @@ var studentSchema = new Schema({
     created_at : {type:Date, default:Date.now},
     updated_at : {type:Date, default:Date.now},
 
-});
+},{
+    toObject : {virtuals : true},
+    toJSON : {virtuals :true}
+  });
 
+  studentSchema.plugin(require('mongoose-paginate'));
 studentSchema
 .virtual('fullname')
 .get(function () {
@@ -57,13 +62,7 @@ studentSchema
 studentSchema
 .virtual('fullAddress')
 .get(function () {
-    City.findById(this.city_id)
-    .populate('state_id')
-    .exec().then(function (city) {
-        return `${this.address} ${city.name} ${city.state_id}`;
-    }).catch(function (err) {
-        return '';
-    });
+    return `${this.address} ${this.city_id.name}, Lagos State`;
 });
 
 

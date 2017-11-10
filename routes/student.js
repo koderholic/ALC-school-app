@@ -1,10 +1,14 @@
+//Modules Dependencies
 const express = require('express');
 const router = express.Router();
-const studentController = require('../controllers/studentController');
+const StudentController = require('../controllers/studentController');
 const multer = require('multer');
-const validation = require('../validation/studentValidate');
+const studentInput = require('../validation/studentValidate');
 const validate = require('express-validation');
 const path = require('path');
+const sanitizer = require('express-sanitizer');
+const paramSanitizer = require('express-sanitize-escape');
+const paginate = require('express-paginate');
 
 //Multer setup
 var storage = multer.diskStorage({
@@ -36,30 +40,40 @@ const upload = multer({
          }
      },
      onError : function(err, next) {
-        console.log('error', err);
-        next(err);
-      } 
-    }); // const upload = multer({ dest: 'uploads/' });//this is the most basic use of multer, it creates the upload folder and generate a random name and autodetermines the file ext and saves it in the upload folder
+        logger.error('error', err);
+        let error = {
+            status : 500,
+            success : false,
+            errMsg : 'Failed to upload file to the server, please try again!',
+            errCode : 'fileErr',
+            devErr : err
+        }
+        next(error);
+    } 
+}); 
+router.use(sanitizer());
 
-/* GET all students handler. */
-router.get('/', studentController.listStudent);
+paramSanitizer.sanitizeParams(router, ['id']);
+/* GET all students request handler. */
+router.use(paginate.middleware(10, 10));
+router.get('/', StudentController.listStudent);
 
-/* Register student handler. */
-router.get('/register', studentController.registerStudent);
-
-
-/* GET a student details handler. */
-router.get('/:id', studentController.getStudent);
+/* Register student request handler. */
+router.get('/register', StudentController.registerStudent);
 
 
-/* CREATE student handler. */
-router.post('/register',upload.single('photo'), studentController.createStudent);
+/* GET a student details request handler. */
+router.get('/:id', StudentController.getStudent);
 
-/* UPDATE student handler. */
-router.patch('/:id/update',validate(validation),upload.single('photo'), studentController.updateStudent);
 
-/* DELETE student handler. */
-router.delete('/:id', studentController.deleteStudent);
+/* CREATE student request handler. */
+router.post('/register',validate(studentInput),upload.single('photo'), StudentController.createStudent);
+
+/* UPDATE student request handler. */
+router.patch('/:id/update',validate(studentInput),upload.single('photo'), StudentController.updateStudent);
+
+/* DELETE student request handler. */
+router.delete('/:id', StudentController.deleteStudent);
 
 
 module.exports = router;
