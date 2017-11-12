@@ -34,9 +34,9 @@ const mongoDB =  process.env.MONGOURI || 'mongodb://localhost/alcappDB';
 //enable promise for mongoose
 mongoose.Promise = global.Promise;
 mongoose.connect(mongoDB).then(function () {
-  logger.info('Mongodb connection successful!');
+  console.log('Mongodb connection successful!');
 }).catch(function (err) {
-  logger.error('MongoDB Connection Error : ' + err);
+  console.log('MongoDB Connection Error : ' + err);
 });
 
  
@@ -75,7 +75,7 @@ app.use(function(req, res, next) {
 app.use(function(err, req, res, next) {
   
   //  We log the error internaly 
-  logger.error(err);
+  console.log(err);
 
   //validator errors
   if (err instanceof validationErr.ValidationError) {
