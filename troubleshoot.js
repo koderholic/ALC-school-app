@@ -1,0 +1,5 @@
+//TypeError: Cannot read property 'firstname' of undefined => if you have a parser for your inputs and you get this error, check the incoming header information, if it corresponds to what the parser was defined for.They could be  a conflict in function
+
+//TypeError : Cast to String failed for value "{ fieldname: \'photo\',\n  originalname: \'20170411_091527.jpg\',\n  encoding: \'7bit\',\n  mimetype: \'image/jpeg\',\n  destination: \'uploads/\',\n  filename: \'b1d565b9caeabe9e7434cd2b5a5585a5\',\n  path: \'uploads\\\\b1d565b9caeabe9e7434cd2b5a5585a5\',\n  size: 926130 }" at path "photo"', name: 'CastError', => this is due to a wrong schema type defined, what is coing in is and objec and the schea typee was a string.Mongoose first trys to cast what is coming in to a string and if it cannot be cast to string, a cast error will be thrown
+
+//my student route was sending an empty file to heroku, thus it was throwing a router.use() error, i used heroku bash to ssh into the herokus server and used cat student.js to echo the file and found nothing there
