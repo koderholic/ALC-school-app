@@ -15,20 +15,20 @@ const winston = require('winston'); // logs to a file
 var students = require('./routes/student');
 
 //logger ssettings
-var logger = new (winston.Logger)({
-  transports: [
-    new (winston.transports.File)({
-      name: 'info-file',
-      filename: path.resolve(__dirname,'alcLogs','alc-info.log'),
-      level: 'info'
-    }),
-    new (winston.transports.File)({
-      name: 'error-file',
-      filename: path.resolve(__dirname,'alcLogs','alc-error.log'),
-      level: 'error'
-    })
-  ]
-});
+// var logger = new (winston.Logger)({
+//   transports: [
+//     new (winston.transports.File)({
+//       name: 'info-file',
+//       filename: path.resolve(__dirname,'alcLogs','alc-info.log'),
+//       level: 'info'
+//     }),
+//     new (winston.transports.File)({
+//       name: 'error-file',
+//       filename: path.resolve(__dirname,'alcLogs','alc-error.log'),
+//       level: 'error'
+//     })
+//   ]
+// });
 //Mongoose connection settings
 const mongoDB =  process.env.MONGOURI || 'mongodb://localhost/alcappDB';
 //enable promise for mongoose
