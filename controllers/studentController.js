@@ -95,7 +95,7 @@ exports.listStudent = function(req, res, next) {
 
 
   //This controller method handles creating the registration form view
-  exports.registerStudent = function name(req, res, next) {
+  exports.registerStudent = function (req, res, next) {
     City.find().then((cities) => {
       res.status(200).json({
         success : true,
