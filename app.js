@@ -19,12 +19,12 @@ var logger = new (winston.Logger)({
   transports: [
     new (winston.transports.File)({
       name: 'info-file',
-      filename: 'logs/alc-info.log',
+      filename: path.resolve(__dirname,'logs','alc-info.log'),
       level: 'info'
     }),
     new (winston.transports.File)({
       name: 'error-file',
-      filename: 'logs/alc-error.log',
+      filename: path.resolve(__dirname,'logs','alc-error.log'),
       level: 'error'
     })
   ]
