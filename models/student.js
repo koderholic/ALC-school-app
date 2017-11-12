@@ -14,7 +14,7 @@ var studentSchema = new Schema({
     email : {type : String, required : true, unique : true},
     mobile : String,
     address : {type:String, required:true},
-    city_id : {type: Schema.ObjectId, ref:'City', required:true},
+    city_id : {type: Schema.ObjectId, ref:'City'},
     photo : {type : {}},
     current_level : {type: String, required:true},
     current_session : {type:String, required:true},
