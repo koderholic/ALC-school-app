@@ -8,6 +8,7 @@ const validationErr = require('express-validation');
 const cookieParser = require('cookie-parser');
 const multer = require('multer');
 const winston = require('winston'); // logs to a file
+const paginate = require('express-paginate');
 
 
 //require routes
@@ -45,6 +46,8 @@ app.use(webRequestLogger('dev'));
 app.use(cookieParser());
 app.use(cors());
 
+
+
 app.get('/',function (req,res,next) {
     res.status(301).redirect('/students');
 });
@@ -53,6 +56,7 @@ app.get('/',function (req,res,next) {
 app.use(express.static(path.resolve(__dirname,'uploads')));
 
 //Student route, for all student related request
+app.use(paginate.middleware(10, 10));
 app.use('/students', students);
 
 

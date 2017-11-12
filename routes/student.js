@@ -51,11 +51,11 @@ const upload = multer({
         next(error);
     } 
 }); 
-// router.use(sanitizer());
+router.use(sanitizer());
 
-// paramSanitizer.sanitizeParams(router, ['id']);
+paramSanitizer.sanitizeParams(router, ['id']);
 /* GET all students request handler. */
-router.use(paginate.middleware(10, 10));
+
 router.get('/', StudentController.listStudent);
 
 /* Register student request handler. */
