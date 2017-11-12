@@ -125,7 +125,7 @@ exports.listStudent = function(req, res, next) {
         email : req.sanitize(req.body.email),
         mobile : req.sanitize(req.body.mobile),
         address : req.sanitize(req.body.address),
-        city_id : req.sanitize(req.body.city),
+        city_id : 'Lagos',
         current_level : req.sanitize(req.body.level),
         current_session : req.sanitize(req.body.session),
         course : req.sanitize(req.body.course)
@@ -175,7 +175,7 @@ exports.listStudent = function(req, res, next) {
         email : req.sanitize(req.body.email),
         mobile : req.sanitize(req.body.mobile),
         address : req.sanitize(req.body.address),
-        city_id : req.sanitize(req.body.city),
+        city_id : 'Lagos',
         current_level : req.sanitize(req.body.level),
         current_session : req.sanitize(req.body.session),
         course : req.sanitize(req.body.course)
