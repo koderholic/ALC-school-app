@@ -30,7 +30,7 @@ var students = require('./routes/student');
 //   ]
 // });
 //Mongoose connection settings
-const mongoDB =  process.env.MONGOURI || 'mongodb://localhost/alcappDB';
+const mongoDB =  process.env.MONGODB_URI || 'mongodb://localhost/alcappDB';
 //enable promise for mongoose
 mongoose.Promise = global.Promise;
 mongoose.connect(mongoDB).then(function () {
