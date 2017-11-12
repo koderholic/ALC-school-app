@@ -55,7 +55,7 @@ router.use(sanitizer());
 
 paramSanitizer.sanitizeParams(router, ['id']);
 /* GET all students request handler. */
-app.use(paginate.middleware(10, 10));
+router.use(paginate.middleware(10, 10));
 router.get('/', StudentController.listStudent);
 
 /* Register student request handler. */
