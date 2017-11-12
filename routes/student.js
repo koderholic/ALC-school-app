@@ -51,7 +51,7 @@ const upload = multer({
         next(error);
     } 
 }); 
-router.use(sanitizer());
+// router.use(sanitizer());
 
 paramSanitizer.sanitizeParams(router, ['id']);
 /* GET all students request handler. */
