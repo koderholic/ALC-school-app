@@ -1,5 +1,5 @@
 // jshint esnext: true
-
+const State = require('../models/state');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -12,6 +12,7 @@ let citySchema =  new Schema({
 
   state_id: {
     type: Schema.ObjectId,
+    ref:'State',
     required : true
   },
 
@@ -25,6 +26,18 @@ let citySchema =  new Schema({
     default: Date.now
   }
 
+},{
+  toObject : {virtuals : true},
+  toJSON : {virtuals :true}
+});
+
+citySchema.virtual('state')
+.get(function (id) {
+  State.findById(id).then((state) => {
+    return state.name
+  }).catch((err) => {
+    return '';
+  });
 });
 
 module.exports = mongoose.model('City', citySchema);

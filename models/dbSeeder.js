@@ -7,7 +7,7 @@ var Course = require('../models/course');
 var async = require('async');
 var mongoose = require('mongoose');
 
-console.log('This script seeds data into the db, this is run in the command prompt by running : node models/dbSeeder mongodb://your_dabase_url');
+console.log('This script seeds startup data into the db.');
 
 //Get arguments passed on command line
 var argsPassed = process.argv.slice(2);
@@ -23,8 +23,6 @@ mongoose.Promise = global.Promise;
 
 var cities = [];
 var states = [];
-var classes = [];
-var courses = [];
 
 
 var createStates =  function(name,cb){
@@ -52,34 +50,6 @@ var createCities =  function(stateId,name,cb){
             cb(null,city);
         });
 }
-
-var createClasses =  function(name,cb){
-    
-    let newClass = {name : name};
-
-        let saveClass = new Class(newClass);
-    
-        saveClass.save(function (err,result) {
-            if(err) return cb(err);
-            classes.push(result);
-            cb(null,result);
-        });
-}
-
-var createCourses =  function(title,module,cb){
-    
-        let course = {title : title, module : module};
-    
-        let saveCourse = new Course(course);
-    
-        saveCourse.save(function (err,result) {
-            if(err) return cb(err);
-            courses.push(result);
-            cb(null,result);
-        });
-}
-
-
 function seedCities(cb) {
     async.parallel([
 
@@ -267,87 +237,18 @@ function seedStates(cb) {
     ], cb);
 }
 
-function seedClasses(cb) {
-    async.parallel([
-
-        function (callback) {
-            createClasses('Class 1',callback);
-        },
-        function (callback) {
-            createClasses('Class 2',callback);
-        },
-        function (callback) {
-            createClasses('Class 3',callback);
-        },
-        function (callback) {
-            createClasses('Class 4',callback);
-        },
-        function (callback) {
-            createClasses('Class 5',callback);
-        },
-        function (callback) {
-            createClasses('Class 6',callback);
-        }
-
-    ],cb);
-}
-
-function seedCourses(cb) {
-    async.parallel([
-
-        function (callback) {
-            createCourses('Mathematics',10,callback);
-        },
-        function (callback) {
-            createCourses('Linguistic',12,callback);
-        },
-        function (callback) {
-            createCourses('English',14,callback);
-        },
-        function (callback) {
-            createCourses('Entreprenuership',8,callback);
-        },
-        function (callback) {
-            createCourses('Basic Science',9,callback);
-        },
-        function (callback) {
-            createCourses('Mathematical Geometry',10,callback);
-        },
-        function (callback) {
-            createCourses('Biological Science',20,callback);
-        },
-        function (callback) {
-            createCourses('Social Works/Studies',17,callback);
-        },
-        function (callback) {
-            createCourses('Physics',13,callback);
-        },
-        function (callback) {
-            createCourses('Biological Interpolation',7,callback);
-        },
-        function (callback) {
-            createCourses('Agro Science',18,callback);
-        },
-        function (callback) {
-            createCourses('Agricultural Studies',7,callback);
-        }
-
-    ],cb);
-}
 
 //this runs each seeds in order of the listing
 async.series([
     seedStates,
-    seedCities,
-    seedClasses,
-    seedCourses
+    seedCities
 ],// optional callback
 function(err, results) {
     if (err) {
         console.log('FINAL ERR: '+err);
     }
     else {
-        console.log('courses: '+courses);
+        console.log('Cities: '+cities);
 
     }
     //All done, disconnect from database
